@@ -1,21 +1,21 @@
-import { BytesLike, ethers } from 'ethers';
-import fs from 'fs';
-import * as dotenv from 'dotenv';
+import { ethers } from "ethers";
+import fs from "fs";
+import * as dotenv from "dotenv";
 dotenv.config();
 
 async function main() {
-	const wallet = new ethers.Wallet(process.env.PRIVATE_KEY as BytesLike);
-	const encryptedJsonKey = await wallet.encrypt(
-		process.env.PRIVATE_KEY_PASSWORD as BytesLike,
-		process.env.PRIVATE_KEY
-	);
-	console.log(encryptedJsonKey);
-	fs.writeFileSync('./.encryptedKey.json', encryptedJsonKey);
+    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!);
+    const encryptedJsonKey = await wallet.encrypt(
+        process.env.PRIVATE_KEY_PASSWORD!,
+        process.env.PRIVATE_KEY!
+    );
+    console.log(encryptedJsonKey);
+    fs.writeFileSync("./.encryptedKey.json", encryptedJsonKey);
 }
 
 main()
-	.then(() => process.exit(0))
-	.catch((error) => {
-		console.log(error);
-		process.exit(1);
-	});
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.log(error);
+        process.exit(1);
+    });
