@@ -1,14 +1,17 @@
-import { BytesLike, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import fs from 'fs';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 async function main() {
-	console.log(process.env.PRIVATE_KEY);
-
 	//http://127.0.0.1:7545
 	const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
-	const wallet = new ethers.Wallet(process.env.PRIVATE_KEY as BytesLike, provider);
+	const encryptedJson = fs.readFileSync('./.encryptedKey.json', 'utf8');
+	let wallet = ethers.Wallet.fromEncryptedJsonSync(
+		encryptedJson,
+		process.env.PRIVATE_KEY_PASSWORD as string
+	);
+	wallet = await wallet.connect(provider);
 	const abi = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.abi', 'utf8');
 	const binary = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.bin', 'utf8');
 	const contractFactory = new ethers.ContractFactory(abi, binary, wallet);
@@ -28,7 +31,7 @@ async function main() {
 
 	console.log('Updated Fav number: ', updatedFavoriteNumber.toString());
 
-	// console.log("Let's deply with only transaction data!");
+	// console.log("Let's deply with only transaction data!");ç
 	// const tx = {
 	// 	nonce: 7,
 	// 	gasPrice: 20000000000,
